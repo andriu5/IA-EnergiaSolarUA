@@ -31,3 +31,6 @@ jobs:
 
     - name: Run tests with pytest
       run: pytest -vs
+
+    - name: Write to Job Summary
+      run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
