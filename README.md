@@ -1,6 +1,12 @@
 pvutils
 ========================
 
+[![Tests](https://github.com/andriu5/IA-EnergiaSolarUA/actions/workflows/.ci.yaml/badge.svg)](https://github.com/andriu5/IA-EnergiaSolarUA/actions/workflows/.ci.yaml)
+
+Copyright © 2023 Andrés Alvear, Mauricio Trigo. All rights reserved.
+
+---------------------------------------------------------------------------------------------------------------------
+
 This project provides a set of Python functions for computing astronomical variables related to photovoltaic power generation. These functions can be used in a machine learning pipeline for forecasting the power output of a photovoltaic plant.
 
 ---------------------------------------------------------------------------------------------------------------------
