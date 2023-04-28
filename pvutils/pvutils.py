@@ -16,25 +16,11 @@ import pytz # Para convertir a UTC
 # def excentricidad():
 #     return 1.00011+0.034221*math.cos(M12)+0.00128*math.sin(M12)+0.000719*math.cos(2*M12)+0.000077*math.sin(2*M12)
 
-irradiancia_extra_cte = 1367 # W/m2
+irradiancia_extra_cte = 1367.7 # W/m2
 
 #funcion para calcular el dia del año
-# def dia_del_ano(fecha) -> int:
-#     """
-#     Calcula el día del año para una fecha dada.
-
-#     Args:
-#         fecha: fecha en formato datetime
-#     Returns:
-#         dia_del_ano: día del año (1-365)
-#     """
-#     tz = pytz.timezone('Chile/Continental')
-#     fecha_hora = datetime.datetime(fecha.year, fecha.month, fecha.day, fecha.hour, fecha.minute, fecha.second, tzinfo=tz)
-#     dia_del_ano = fecha_hora.timetuple().tm_yday
-#     return dia_del_ano
-
-def dia_del_ano(fecha_hora) -> int:
-    return datetime.datetime(fecha_hora.year, fecha_hora.month, fecha_hora.day, fecha_hora.hour, fecha_hora.minute, fecha_hora.second, tzinfo=pytz.timezone('Chile/Continental')).timetuple().tm_yday
+def julian_day(fecha_hora, TZ='Chile/Continental') -> int:
+    return datetime.datetime(fecha_hora.year, fecha_hora.month, fecha_hora.day, fecha_hora.hour, fecha_hora.minute, fecha_hora.second, tzinfo=pytz.timezone(TZ)).timetuple().tm_yday
 
 
 def angulo_diario(fecha, unit='rad') -> float:
@@ -48,7 +34,7 @@ def angulo_diario(fecha, unit='rad') -> float:
         angulo_diario: ángulo diario (grados o radianes)
     """
 
-    angulo_diario = 2*math.pi*(dia_del_ano(fecha)-1)/365
+    angulo_diario = 2*math.pi*(julian_day(fecha)-1)/365
     if unit == 'deg':
         angulo_diario = math.degrees(angulo_diario)
     return angulo_diario
@@ -160,6 +146,34 @@ def cos_sza(latitude: float, hour_angle: float, solar_declination: float, unit='
         cos_sza = math.degrees(cos_sza)
 
     return cos_sza
+
+def sza(latitude: float, hour_angle: float, solar_declination: float, unit='rad', cos_sza=None) -> float:
+    """
+    Calcula el ángulo cenital (SZA) para una latitud, ángulo horario y declinación solar dados.
+    Args:
+        latitude: latitud de la ubicación (grados o radianes)
+        hour_angle: ángulo horario (grados o radianes)
+        solar_declination: declinación solar (grados o radianes)
+        cos_sza: coseno del ángulo cenital (grados o radianes)
+        unit: unidades del ángulo ('deg' para grados o 'rad' para radianes)
+    Returns:
+        sza: ángulo cenital (grados o radianes)
+    """
+    if unit == 'deg':
+        latitude, hour_angle, solar_declination = map(math.radians, (latitude, hour_angle, solar_declination))
+    sin_lat = math.sin(latitude)
+    sin_dec = math.sin(solar_declination)
+    cos_lat = math.cos(latitude)
+    cos_dec = math.cos(solar_declination)
+    if cos_sza is None:
+        cos_sza = sin_lat * sin_dec + cos_lat * cos_dec * math.cos(hour_angle)
+        if unit == 'deg':
+            cos_sza = math.degrees(cos_sza)
+        return math.acos(cos_sza)
+    if unit == 'deg':
+        cos_sza = math.radians(cos_sza)
+    return math.acos(cos_sza)
+
 
 def distancia_tierra_sol(angulo_diario: float, unit='rad') -> float:
     """
