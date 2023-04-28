@@ -39,6 +39,7 @@ def angulo_diario(fecha, unit='rad') -> float:
         angulo_diario = math.degrees(angulo_diario)
     return angulo_diario
 
+
 def ecc_del_tiempo(angulo_diario: float, unit='rad') -> float:
     """
     Calcula la ecuación del tiempo (Et) para un angulo diario dado.
@@ -52,8 +53,9 @@ def ecc_del_tiempo(angulo_diario: float, unit='rad') -> float:
     if unit == 'deg':
         angulo_diario = math.degrees(angulo_diario)
 
-    Et = 229.18*(0.000075+0.001868*math.cos(angulo_diario)-0.032077*math.sin(angulo_diario)-0.014615*math.cos(2*angulo_diario)-0.040849*math.sin(2*angulo_diario))
+    Et = 229.18*(0.000075+0.001868*math.cos(angulo_diario)-0.032077*math.sin(angulo_diario)-0.014615*math.cos(2*angulo_diario)-0.04089*math.sin(2*angulo_diario))
     return Et
+
 
 def tiempo_solar_verdadero(hora_local_std: datetime, utc: str, ecc_del_tiempo: float, long_meridian: float, long_ubicacion: float) -> float:
     """
@@ -73,6 +75,7 @@ def tiempo_solar_verdadero(hora_local_std: datetime, utc: str, ecc_del_tiempo: f
 
     return hora_local_std + ecc_del_tiempo/60 + 4*(long_meridian-long_ubicacion)/24/60 + 4*(long_meridian-long_ubicacion)
 
+
 def angulo_horario(tsv: datetime, unit='rad') -> float:
     """
     Calcula el ángulo horario (HRA) para un tiempo solar verdadero dado.
@@ -87,6 +90,7 @@ def angulo_horario(tsv: datetime, unit='rad') -> float:
     if unit == 'deg':
         angulo_horario = math.degrees(angulo_horario)
     return angulo_horario
+
 
 def declinacion_solar(angulo_diario: float, unit='rad') -> float:
     """
@@ -118,6 +122,7 @@ def declinacion_solar(angulo_diario: float, unit='rad') -> float:
     
     return declinacion_solar
 
+
 def cos_sza(latitude: float, hour_angle: float, solar_declination: float, unit='rad') -> float:
     """
     Calcula el coseno del ángulo cenital (cos(SZA)) para una latitud, ángulo horario y declinación solar dados.
@@ -147,32 +152,29 @@ def cos_sza(latitude: float, hour_angle: float, solar_declination: float, unit='
 
     return cos_sza
 
-def sza(latitude: float, hour_angle: float, solar_declination: float, unit='rad', cos_sza=None) -> float:
+
+def sza(cos_zsa, unit='rad') -> float:
     """
-    Calcula el ángulo cenital (SZA) para una latitud, ángulo horario y declinación solar dados.
+    Calcula el ángulo cenital (SZA) para un coseno del ángulo cenital dado.
+
     Args:
-        latitude: latitud de la ubicación (grados o radianes)
-        hour_angle: ángulo horario (grados o radianes)
-        solar_declination: declinación solar (grados o radianes)
-        cos_sza: coseno del ángulo cenital (grados o radianes)
+        cos_zsa: coseno del ángulo cenital (grados o radianes)
         unit: unidades del ángulo ('deg' para grados o 'rad' para radianes)
     Returns:
         sza: ángulo cenital (grados o radianes)
     """
-    if unit == 'deg':
-        latitude, hour_angle, solar_declination = map(math.radians, (latitude, hour_angle, solar_declination))
-    sin_lat = math.sin(latitude)
-    sin_dec = math.sin(solar_declination)
-    cos_lat = math.cos(latitude)
-    cos_dec = math.cos(solar_declination)
-    if cos_sza is None:
-        cos_sza = sin_lat * sin_dec + cos_lat * cos_dec * math.cos(hour_angle)
+    try:
+        sza = math.acos(cos_zsa)
         if unit == 'deg':
-            cos_sza = math.degrees(cos_sza)
-        return math.acos(cos_sza)
-    if unit == 'deg':
-        cos_sza = math.radians(cos_sza)
-    return math.acos(cos_sza)
+            sza = math.degrees(sza)
+    except ValueError as e:
+        if cos_zsa > 1:
+            sza = 0
+        elif cos_zsa < -1:
+            sza = math.pi
+        else:
+            raise e
+    return sza
 
 
 def distancia_tierra_sol(angulo_diario: float, unit='rad') -> float:
@@ -193,6 +195,7 @@ def distancia_tierra_sol(angulo_diario: float, unit='rad') -> float:
     
     return distancia_tierra_sol
 
+
 def irradiancia_extra_sup_horizontal(irradiacion_extraterrestre: float, distancia_tierra_sol: float, cos_zsa: float) -> float:
     """
     Calcula la irradiancia extraterrestre en la superficie horizontal de la tierra
@@ -208,6 +211,7 @@ def irradiancia_extra_sup_horizontal(irradiacion_extraterrestre: float, distanci
     irradiancia_extra_sup_horizontal = irradiacion_extraterrestre * distancia_tierra_sol ** 2 * cos_zsa
 
     return irradiancia_extra_sup_horizontal
+
 
 def indice_claridad_cielo(irradiancia_global, tsi, cos_cenital):
     """
