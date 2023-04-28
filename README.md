@@ -5,12 +5,10 @@ pvutils
 
 Copyright © 2023 Andrés Alvear, Mauricio Trigo. All rights reserved.
 
----------------------------------------------------------------------------------------------------------------------
-
 This project provides a set of Python functions for computing astronomical variables related to photovoltaic power generation. These functions can be used in a machine learning pipeline for forecasting the power output of a photovoltaic plant.
 
 ---------------------------------------------------------------------------------------------------------------------
-## 1. Implementation details:
+## Implementation details:
 
 The project consists of a single Python module `pvutils` that contains several functions for calculating important variables for photovoltaic power generation, including:
 
@@ -24,13 +22,21 @@ The project consists of a single Python module `pvutils` that contains several f
 `pvutils` is an abbreviation of **"photovoltaic utilities"**, which refers to a set of functions and utilities designed to facilitate the calculations and analysis required for photovoltaic (PV) solar energy systems. These functions typically involve the calculation of various solar-related variables such as solar irradiance, angle of incidence, and shading effects, which are important for the accurate modeling and prediction of PV system performance.
 
 ---------------------------------------------------------------------------------------------------------------------
+
+## 1. Getting started
+Install the required packages
+
+`pip install -r requirements.txt`
+
+---------------------------------------------------------------------------------------------------------------------
+
 ## 2. Testing:
 ### 2.1 Unit Tests:
 
 The project has unit tests to validate that the functions and methods works as required:
 
 ```py
-$ python -m unittest --verbose
+$ pytest -vs
 ```
 ---------------------------------------------------------------------------------------------------------------------
 ## 3. Running the code:
