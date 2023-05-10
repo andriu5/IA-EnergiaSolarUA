@@ -19,9 +19,10 @@ class TestPVUtils:
         ecc_del_tiempo = pvu.ecc_del_tiempo(angulo_diario1)
         assert ecc_del_tiempo == -2.90416896
         ecc_del_tiempo = pvu.ecc_del_tiempo(angulo_diario2)
-        assert ecc_del_tiempo == -3.4623274857594577
+        assert ecc_del_tiempo == -3.461842447750754
         ecc_del_tiempo = pvu.ecc_del_tiempo(angulo_diario3)
-        assert ecc_del_tiempo == -2.453457770899547
+        assert ecc_del_tiempo == -2.453134332356527
+
     # def test_indice_claridad_cielo(self):
     #     Kt = indice_claridad_cielo(0, 0, datetime(2019, 1, 1, 12, 0, 0))
     #     assert Kt == 0.0

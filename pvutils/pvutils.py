@@ -57,7 +57,7 @@ def ecc_del_tiempo(angulo_diario: float, unit='rad') -> float:
     return Et
 
 
-def tiempo_solar_verdadero(hora_local_std: datetime, utc: str, ecc_del_tiempo: float, long_meridian: float, long_ubicacion: float) -> float:
+def tsv(hora_local_std: datetime, utc: str, ecc_del_tiempo: float, long_meridian: float, long_ubicacion: float) -> float:
     """
     Calcula el tiempo solar verdadero (TSV) para una hora local dada.
 
@@ -72,8 +72,12 @@ def tiempo_solar_verdadero(hora_local_std: datetime, utc: str, ecc_del_tiempo: f
         tiempo_solar_verdadero: tiempo solar verdadero (datetime)
     """
     hora_local_std = hora_local_std.replace(tzinfo=pytz.timezone(utc))
+    # compute the TSV in minutes
+    tsv = hora_local_std.hour*60 + hora_local_std.minute + hora_local_std.second/60 + ecc_del_tiempo + 4*(long_meridian-long_ubicacion)/24/60
+    # convert to datetime
+    tsv = datetime.datetime(hora_local_std.year, hora_local_std.month, hora_local_std.day, int(tsv/60), int(tsv%60), int((tsv%1)*60), tzinfo=pytz.timezone(utc))
 
-    return hora_local_std + ecc_del_tiempo/60 + 4*(long_meridian-long_ubicacion)/24/60 + 4*(long_meridian-long_ubicacion)
+    return tsv
 
 
 def angulo_horario(tsv: datetime, unit='rad') -> float:
