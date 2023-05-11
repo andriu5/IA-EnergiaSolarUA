@@ -19,8 +19,8 @@ import pytz # Para convertir a UTC
 irradiancia_extra_cte = 1367.7 # W/m2
 
 #funcion para calcular el dia del año
-def julian_day(fecha_hora, TZ='Chile/Continental') -> int:
-    return datetime.datetime(fecha_hora.year, fecha_hora.month, fecha_hora.day, fecha_hora.hour, fecha_hora.minute, fecha_hora.second, tzinfo=pytz.timezone(TZ)).timetuple().tm_yday
+def julian_day(fecha_hora) -> int:
+    return datetime.datetime(fecha_hora.year, fecha_hora.month, fecha_hora.day, fecha_hora.hour, fecha_hora.minute, fecha_hora.second).timetuple().tm_yday
 
 
 def angulo_diario(fecha, unit='rad') -> float:
@@ -57,7 +57,7 @@ def ecc_del_tiempo(angulo_diario: float, unit='rad') -> float:
     return Et
 
 
-def tsv(hora_local_std: datetime, utc: str, ecc_del_tiempo: float, long_meridian: float, long_ubicacion: float) -> float:
+def tsv(hora_local_std: datetime, tz: str, ecc_del_tiempo: float, long_meridian: float, long_ubicacion: float) -> float:
     """
     Calcula el tiempo solar verdadero (TSV) para una hora local dada.
 
@@ -71,11 +71,11 @@ def tsv(hora_local_std: datetime, utc: str, ecc_del_tiempo: float, long_meridian
     Returns:
         tiempo_solar_verdadero: tiempo solar verdadero (datetime)
     """
-    hora_local_std = hora_local_std.replace(tzinfo=pytz.timezone(utc))
+    hora_local_std = hora_local_std.replace(tzinfo=pytz.timezone(tz))
     # compute the TSV in minutes
     tsv = hora_local_std.hour*60 + hora_local_std.minute + hora_local_std.second/60 + ecc_del_tiempo + 4*(long_meridian-long_ubicacion)
     # convert to datetime
-    tsv = datetime.datetime(hora_local_std.year, hora_local_std.month, hora_local_std.day, int(tsv/60), int(tsv%60), int((tsv%1)*60), tzinfo=pytz.timezone(utc))
+    tsv = datetime.datetime(hora_local_std.year, hora_local_std.month, hora_local_std.day, int(tsv/60), int(tsv%60), int((tsv%1)*60), tzinfo=pytz.timezone(tz))
 
     return tsv
 
