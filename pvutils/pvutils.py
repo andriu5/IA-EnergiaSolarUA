@@ -73,7 +73,7 @@ def tsv(hora_local_std: datetime, utc: str, ecc_del_tiempo: float, long_meridian
     """
     hora_local_std = hora_local_std.replace(tzinfo=pytz.timezone(utc))
     # compute the TSV in minutes
-    tsv = hora_local_std.hour*60 + hora_local_std.minute + hora_local_std.second/60 + ecc_del_tiempo + 4*(long_meridian-long_ubicacion)/24/60
+    tsv = hora_local_std.hour*60 + hora_local_std.minute + hora_local_std.second/60 + ecc_del_tiempo + 4*(long_meridian-long_ubicacion)
     # convert to datetime
     tsv = datetime.datetime(hora_local_std.year, hora_local_std.month, hora_local_std.day, int(tsv/60), int(tsv%60), int((tsv%1)*60), tzinfo=pytz.timezone(utc))
 
